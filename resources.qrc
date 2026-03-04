@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/wrt_plugin_lite" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
