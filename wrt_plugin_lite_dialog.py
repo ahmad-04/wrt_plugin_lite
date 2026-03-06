@@ -23,22 +23,180 @@
 """
 
 import os
+import json
 
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
+from qgis.utils import iface
 
-# This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'wrt_plugin_lite_dialog_base.ui'))
+from .route_map_tool import RouteMapTool
+
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "wrt_plugin_lite_dialog_base.ui")
+)
 
 
 class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(WRTPluginLiteDialog, self).__init__(parent)
-        # Set up the user interface from Designer through FORM_CLASS.
-        # After self.setupUi() you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+
+        # Simple demo state
+        self.state = {
+            "source": None,
+            "destination": None,
+        }
+
+        # Fill dropdowns
+        self.comboAlgorithm.addItems([
+            "Genetic Algorithm",
+            "Isofuel Algorithm",
+        ])
+
+        self.comboVessel.addItems([
+            "Generic Cargo",
+            "Fast Vessel",
+        ])
+
+        # Map tool setup
+        self._prev_map_tool = None
+        self._route_tool = RouteMapTool(iface.mapCanvas(), self._on_point_picked)
+
+        # Button connections
+        self.btnPickRoute.clicked.connect(self._start_pick_route)
+        self.btnClearRoute.clicked.connect(self._clear_route)
+        self.btnExportJson.clicked.connect(self._export_json)
+
+        # Initial UI
+        self._refresh_route_labels()
+
+    def _start_pick_route(self):
+        """Activate map tool for selecting source and destination."""
+        canvas = iface.mapCanvas()
+        self._prev_map_tool = canvas.mapTool()
+        self._route_tool.reset()
+        canvas.setMapTool(self._route_tool)
+
+        QMessageBox.information(
+            self,
+            "Route Selection",
+            "Click once on the map to set SOURCE, then click again to set DESTINATION."
+        )
+
+    def _on_point_picked(self, kind, lat, lon):
+        """Called by RouteMapTool when a point is clicked."""
+        if kind == "source":
+            self.state["source"] = (lat, lon)
+        elif kind == "destination":
+            self.state["destination"] = (lat, lon)
+            self._restore_previous_map_tool()
+
+        self._refresh_route_labels()
+
+    def _restore_previous_map_tool(self):
+        """Restore whatever map tool was active before route picking."""
+        canvas = iface.mapCanvas()
+        if self._prev_map_tool is not None:
+            canvas.setMapTool(self._prev_map_tool)
+            self._prev_map_tool = None
+
+    def _clear_route(self):
+        """Clear selected route points."""
+        self.state["source"] = None
+        self.state["destination"] = None
+        self._refresh_route_labels()
+        self._restore_previous_map_tool()
+
+    def _refresh_route_labels(self):
+        """Update source/destination labels."""
+        src = self.state["source"]
+        dst = self.state["destination"]
+
+        if src:
+            self.lblSource.setText(f"Source: {src[0]:.6f}, {src[1]:.6f}")
+        else:
+            self.lblSource.setText("Source: not set")
+
+        if dst:
+            self.lblDest.setText(f"Destination: {dst[0]:.6f}, {dst[1]:.6f}")
+        else:
+            self.lblDest.setText("Destination: not set")
+
+    def _get_vessel_preset(self):
+        """Return simple vessel preset values for demo."""
+        vessel_name = self.comboVessel.currentText()
+
+        presets = {
+            "Generic Cargo": {
+                "BOAT_SPEED": 12,
+                "BOAT_LENGTH": 120,
+                "BOAT_BREADTH": 20,
+            },
+            "Fast Vessel": {
+                "BOAT_SPEED": 20,
+                "BOAT_LENGTH": 80,
+                "BOAT_BREADTH": 14,
+            },
+        }
+
+        return presets.get(vessel_name, presets["Generic Cargo"])
+
+    def _get_algorithm_value(self):
+        """Map combo text to simple config value."""
+        text = self.comboAlgorithm.currentText()
+
+        if text == "Isofuel Algorithm":
+            return "isofuel"
+        return "genetic"
+
+    def _export_json(self):
+        """Export a minimal demo WRT config JSON."""
+        if not self.state["source"] or not self.state["destination"]:
+            QMessageBox.warning(
+                self,
+                "Missing Route",
+                "Please select both Source and Destination first."
+            )
+            return
+
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Configuration",
+            "config.runtime.json",
+            "JSON Files (*.json)"
+        )
+
+        if not path:
+            return
+
+        vessel = self._get_vessel_preset()
+
+        config = {
+            "DEFAULT_ROUTE": [
+                [self.state["source"][0], self.state["source"][1]],
+                [self.state["destination"][0], self.state["destination"][1]],
+            ],
+            "ALGORITHM": self._get_algorithm_value(),
+            "BOAT_SPEED": vessel["BOAT_SPEED"],
+            "BOAT_LENGTH": vessel["BOAT_LENGTH"],
+            "BOAT_BREADTH": vessel["BOAT_BREADTH"],
+            "OUTPUT_ROUTE": "route.geojson",
+        }
+
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(config, f, indent=2)
+
+            QMessageBox.information(
+                self,
+                "Export Complete",
+                f"Configuration saved successfully:\n{path}"
+            )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "Export Failed",
+                f"Could not save file:\n{str(e)}"
+            )

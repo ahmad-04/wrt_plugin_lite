@@ -1,35 +1,172 @@
-<ui version="4.0" >
+<ui version="4.0">
  <class>WRTPluginLiteDialogBase</class>
- <widget class="QDialog" name="WRTPluginLiteDialogBase" >
-  <property name="geometry" >
+ <widget class="QDialog" name="WRTPluginLiteDialogBase">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>520</width>
+    <height>420</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>WRT Plugin Lite</string>
   </property>
-  <widget class="QDialogButtonBox" name="button_box" >
-   <property name="geometry" >
+
+  <widget class="QPushButton" name="btnPickRoute">
+   <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>240</y>
-     <width>341</width>
+     <x>20</x>
+     <y>20</y>
+     <width>180</width>
      <height>32</height>
     </rect>
    </property>
-   <property name="orientation" >
+   <property name="text">
+    <string>Pick Source &amp; Destination</string>
+   </property>
+  </widget>
+
+  <widget class="QPushButton" name="btnClearRoute">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>20</y>
+     <width>100</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Clear</string>
+   </property>
+  </widget>
+
+  <widget class="QLabel" name="labelRouteTitle">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>70</y>
+     <width>200</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Selected Route</string>
+   </property>
+  </widget>
+
+  <widget class="QLabel" name="lblSource">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>100</y>
+     <width>470</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Source: not set</string>
+   </property>
+  </widget>
+
+  <widget class="QLabel" name="lblDest">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>130</y>
+     <width>470</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Destination: not set</string>
+   </property>
+  </widget>
+
+  <widget class="QLabel" name="labelAlgorithm">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>190</y>
+     <width>100</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Algorithm</string>
+   </property>
+  </widget>
+
+  <widget class="QComboBox" name="comboAlgorithm">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>190</y>
+     <width>180</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+
+  <widget class="QLabel" name="labelVessel">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>230</y>
+     <width>100</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Vessel Preset</string>
+   </property>
+  </widget>
+
+  <widget class="QComboBox" name="comboVessel">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>230</y>
+     <width>180</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+
+  <widget class="QPushButton" name="btnExportJson">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>290</y>
+     <width>180</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Export JSON</string>
+   </property>
+  </widget>
+
+  <widget class="QDialogButtonBox" name="button_box">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>360</y>
+     <width>321</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
-   <property name="standardButtons" >
+   <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
  </widget>
+
  <resources/>
+
  <connections>
   <connection>
    <sender>button_box</sender>
@@ -37,11 +174,11 @@
    <receiver>WRTPluginLiteDialogBase</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="source_label" >
+    <hint type="source_label">
      <x>248</x>
      <y>254</y>
     </hint>
-    <hint type="destination_label" >
+    <hint type="destination_label">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -53,11 +190,11 @@
    <receiver>WRTPluginLiteDialogBase</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="source_label" >
+    <hint type="source_label">
      <x>316</x>
      <y>260</y>
     </hint>
-    <hint type="destination_label" >
+    <hint type="destination_label">
      <x>286</x>
      <y>274</y>
     </hint>
