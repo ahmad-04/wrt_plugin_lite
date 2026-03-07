@@ -27,7 +27,8 @@ import json
 
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
-from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
+from qgis.PyQt.QtCore import QDateTime
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QTableWidgetItem
 from qgis.utils import iface
 
 from .route_map_tool import RouteMapTool
@@ -39,41 +40,139 @@ FORM_CLASS, _ = uic.loadUiType(
 
 class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
-        """Constructor."""
         super(WRTPluginLiteDialog, self).__init__(parent)
         self.setupUi(self)
 
-        # Simple demo state
         self.state = {
             "source": None,
             "destination": None,
+            "waypoints": [],
+            "departure_time": None,
+            "arrival_time": None,
+            "forecast_horizon": 90,
+            "forecast_resolution": 3,
+            "algorithm": "genetic",
+            "boat_preset": "Generic Cargo",
+            "data_mode": "Automatic",
+            "weather_path": "",
+            "depth_path": "",
+            "route_output_path": "",
         }
 
-        # Fill dropdowns
+        self._prev_map_tool = None
+        self._route_tool = RouteMapTool(iface.mapCanvas(), self._on_point_picked)
+
+        self._setup_ui()
+        self._connect_signals()
+        self._load_defaults()
+        self._refresh_route_table()
+        self._update_navigation_buttons()
+        self._update_summary()
+
+    def _setup_ui(self):
+        self.navList.setCurrentRow(0)
+        self.stackedWidget.setCurrentIndex(0)
+
+        self.tableRoute.setHorizontalHeaderLabels(["Type", "Latitude", "Longitude"])
+        self.tableRoute.verticalHeader().setVisible(False)
+        self.tableRoute.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.tableRoute.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.tableRoute.horizontalHeader().setStretchLastSection(True)
+
+        self.dateTimeDeparture.setDateTime(QDateTime.currentDateTime())
+        self.dateTimeArrival.setDateTime(QDateTime.currentDateTime().addSecs(24 * 3600))
+
+    def _connect_signals(self):
+        self.navList.currentRowChanged.connect(self._change_page)
+
+        self.btnNext.clicked.connect(self._go_next)
+        self.btnBack.clicked.connect(self._go_back)
+        self.btnCancel.clicked.connect(self.reject)
+
+        self.btnPickRoute.clicked.connect(self._start_pick_route)
+        self.btnClearRoute.clicked.connect(self._clear_route)
+        self.btnExportJson.clicked.connect(self._export_json)
+
+        self.comboAlgorithm.currentTextChanged.connect(self._on_algorithm_changed)
+        self.comboVessel.currentTextChanged.connect(self._on_vessel_changed)
+        self.comboDataMode.currentTextChanged.connect(self._on_data_mode_changed)
+
+        self.dateTimeDeparture.dateTimeChanged.connect(self._on_departure_changed)
+        self.dateTimeArrival.dateTimeChanged.connect(self._on_arrival_changed)
+        self.spinForecastHorizon.valueChanged.connect(self._on_forecast_horizon_changed)
+        self.spinForecastResolution.valueChanged.connect(self._on_forecast_resolution_changed)
+
+        self.lineWeatherPath.textChanged.connect(self._on_weather_path_changed)
+        self.lineDepthPath.textChanged.connect(self._on_depth_path_changed)
+        self.lineRouteOutputPath.textChanged.connect(self._on_route_output_path_changed)
+
+    def _load_defaults(self):
+        self.comboAlgorithm.clear()
         self.comboAlgorithm.addItems([
             "Genetic Algorithm",
             "Isofuel Algorithm",
         ])
 
+        self.comboVessel.clear()
         self.comboVessel.addItems([
             "Generic Cargo",
             "Fast Vessel",
         ])
 
-        # Map tool setup
-        self._prev_map_tool = None
-        self._route_tool = RouteMapTool(iface.mapCanvas(), self._on_point_picked)
+        self.comboDataMode.clear()
+        self.comboDataMode.addItems([
+            "Automatic",
+            "Manual",
+        ])
 
-        # Button connections
-        self.btnPickRoute.clicked.connect(self._start_pick_route)
-        self.btnClearRoute.clicked.connect(self._clear_route)
-        self.btnExportJson.clicked.connect(self._export_json)
+        self.comboAlgorithm.setCurrentIndex(0)
+        self.comboVessel.setCurrentText("Generic Cargo")
+        self.comboDataMode.setCurrentText("Automatic")
 
-        # Initial UI
-        self._refresh_route_labels()
+        self.spinForecastHorizon.setValue(90)
+        self.spinForecastResolution.setValue(3)
+
+        self.lineWeatherPath.setText("/path/to/output/weather.nc")
+        self.lineDepthPath.setText("/path/to/output/depth.nc")
+        self.lineRouteOutputPath.setText("/path/to/output/route.geojson")
+
+        self.state["departure_time"] = self.dateTimeDeparture.dateTime().toString("yyyy-MM-dd HH:mm")
+        self.state["arrival_time"] = self.dateTimeArrival.dateTime().toString("yyyy-MM-dd HH:mm")
+        self.state["weather_path"] = self.lineWeatherPath.text()
+        self.state["depth_path"] = self.lineDepthPath.text()
+        self.state["route_output_path"] = self.lineRouteOutputPath.text()
+
+    def _change_page(self, index):
+        if index < 0 or index >= self.stackedWidget.count():
+            return
+        self.stackedWidget.setCurrentIndex(index)
+        self._update_navigation_buttons()
+        self._update_summary()
+
+    def _go_next(self):
+        current = self.stackedWidget.currentIndex()
+        if current < self.stackedWidget.count() - 1:
+            self.navList.setCurrentRow(current + 1)
+        else:
+            self.accept()
+
+    def _go_back(self):
+        current = self.stackedWidget.currentIndex()
+        if current > 0:
+            self.navList.setCurrentRow(current - 1)
+
+    def _update_navigation_buttons(self):
+        current = self.stackedWidget.currentIndex()
+        last_index = self.stackedWidget.count() - 1
+
+        self.btnBack.setEnabled(current > 0)
+
+        if current == last_index:
+            self.btnNext.setText("Finish")
+        else:
+            self.btnNext.setText("Next")
 
     def _start_pick_route(self):
-        """Activate map tool for selecting source and destination."""
         canvas = iface.mapCanvas()
         self._prev_map_tool = canvas.mapTool()
         self._route_tool.reset()
@@ -86,48 +185,103 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
         )
 
     def _on_point_picked(self, kind, lat, lon):
-        """Called by RouteMapTool when a point is clicked."""
         if kind == "source":
             self.state["source"] = (lat, lon)
         elif kind == "destination":
             self.state["destination"] = (lat, lon)
             self._restore_previous_map_tool()
 
-        self._refresh_route_labels()
+        self._refresh_route_table()
+        self._update_summary()
 
     def _restore_previous_map_tool(self):
-        """Restore whatever map tool was active before route picking."""
         canvas = iface.mapCanvas()
         if self._prev_map_tool is not None:
             canvas.setMapTool(self._prev_map_tool)
             self._prev_map_tool = None
 
     def _clear_route(self):
-        """Clear selected route points."""
         self.state["source"] = None
         self.state["destination"] = None
-        self._refresh_route_labels()
+        self.state["waypoints"] = []
+        self._refresh_route_table()
         self._restore_previous_map_tool()
+        self._update_summary()
 
-    def _refresh_route_labels(self):
-        """Update source/destination labels."""
-        src = self.state["source"]
-        dst = self.state["destination"]
+    def _refresh_route_table(self):
+        rows = []
 
-        if src:
-            self.lblSource.setText(f"Source: {src[0]:.6f}, {src[1]:.6f}")
+        if self.state["source"] is not None:
+            rows.append(("Source", self.state["source"][0], self.state["source"][1]))
+
+        for i, wp in enumerate(self.state["waypoints"], start=1):
+            rows.append((f"Waypoint {i}", wp[0], wp[1]))
+
+        if self.state["destination"] is not None:
+            rows.append(("Destination", self.state["destination"][0], self.state["destination"][1]))
+
+        if not rows:
+            rows = [
+                ("Source", "", ""),
+                ("Destination", "", "")
+            ]
+
+        self.tableRoute.setRowCount(len(rows))
+
+        for row_idx, row_data in enumerate(rows):
+            for col_idx, value in enumerate(row_data):
+                if isinstance(value, float):
+                    item = QTableWidgetItem(f"{value:.6f}")
+                else:
+                    item = QTableWidgetItem(str(value))
+                self.tableRoute.setItem(row_idx, col_idx, item)
+
+        self.tableRoute.resizeColumnsToContents()
+
+    def _on_departure_changed(self, value):
+        self.state["departure_time"] = value.toString("yyyy-MM-dd HH:mm")
+        self._update_summary()
+
+    def _on_arrival_changed(self, value):
+        self.state["arrival_time"] = value.toString("yyyy-MM-dd HH:mm")
+        self._update_summary()
+
+    def _on_forecast_horizon_changed(self, value):
+        self.state["forecast_horizon"] = value
+        self._update_summary()
+
+    def _on_forecast_resolution_changed(self, value):
+        self.state["forecast_resolution"] = value
+        self._update_summary()
+
+    def _on_algorithm_changed(self, text):
+        if text == "Isofuel Algorithm":
+            self.state["algorithm"] = "isofuel"
         else:
-            self.lblSource.setText("Source: not set")
+            self.state["algorithm"] = "genetic"
+        self._update_summary()
 
-        if dst:
-            self.lblDest.setText(f"Destination: {dst[0]:.6f}, {dst[1]:.6f}")
-        else:
-            self.lblDest.setText("Destination: not set")
+    def _on_vessel_changed(self, text):
+        self.state["boat_preset"] = text
+        self._update_summary()
+
+    def _on_data_mode_changed(self, text):
+        self.state["data_mode"] = text
+        self._update_summary()
+
+    def _on_weather_path_changed(self, text):
+        self.state["weather_path"] = text
+        self._update_summary()
+
+    def _on_depth_path_changed(self, text):
+        self.state["depth_path"] = text
+        self._update_summary()
+
+    def _on_route_output_path_changed(self, text):
+        self.state["route_output_path"] = text
+        self._update_summary()
 
     def _get_vessel_preset(self):
-        """Return simple vessel preset values for demo."""
-        vessel_name = self.comboVessel.currentText()
-
         presets = {
             "Generic Cargo": {
                 "BOAT_SPEED": 12,
@@ -140,25 +294,97 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
                 "BOAT_BREADTH": 14,
             },
         }
+        return presets.get(self.state["boat_preset"], presets["Generic Cargo"])
 
-        return presets.get(vessel_name, presets["Generic Cargo"])
+    def _build_summary_text(self):
+        src = self.state["source"]
+        dst = self.state["destination"]
 
-    def _get_algorithm_value(self):
-        """Map combo text to simple config value."""
-        text = self.comboAlgorithm.currentText()
+        if src:
+            src_text = f"[{src[0]:.6f}, {src[1]:.6f}]"
+        else:
+            src_text = "Not set"
 
-        if text == "Isofuel Algorithm":
-            return "isofuel"
-        return "genetic"
+        if dst:
+            dst_text = f"[{dst[0]:.6f}, {dst[1]:.6f}]"
+        else:
+            dst_text = "Not set"
+
+        vessel = self._get_vessel_preset()
+
+        lines = [
+            "Route",
+            f"Source: {src_text}",
+            f"Destination: {dst_text}",
+            f"Waypoints: {len(self.state['waypoints'])}",
+            "",
+            "Time & Algorithm",
+            f"Departure: {self.state['departure_time']}",
+            f"Arrival: {self.state['arrival_time']}",
+            f"Forecast Horizon: {self.state['forecast_horizon']} h",
+            f"Forecast Resolution: {self.state['forecast_resolution']} h",
+            f"Algorithm: {self.state['algorithm']}",
+            "",
+            "Vessel",
+            f"Boat Preset: {self.state['boat_preset']}",
+            f"Speed: {vessel['BOAT_SPEED']} knots",
+            f"Length: {vessel['BOAT_LENGTH']} m",
+            f"Breadth: {vessel['BOAT_BREADTH']} m",
+            "",
+            "Data & Output",
+            f"Data Mode: {self.state['data_mode']}",
+            f"Weather Path: {self.state['weather_path']}",
+            f"Depth Path: {self.state['depth_path']}",
+            f"Route Output Path: {self.state['route_output_path']}",
+        ]
+
+        return "\n".join(lines)
+
+    def _update_summary(self):
+        self.summaryText.setPlainText(self._build_summary_text())
+
+    def _build_config(self):
+        if not self.state["source"] or not self.state["destination"]:
+            raise ValueError("Source and Destination must be selected before export.")
+
+        vessel = self._get_vessel_preset()
+
+        config = {
+            "DEFAULT_ROUTE": [
+                [self.state["source"][0], self.state["source"][1]],
+                [self.state["destination"][0], self.state["destination"][1]],
+            ],
+            "INTERMEDIATE_WAYPOINTS": self.state["waypoints"],
+            "TIME": {
+                "DEPARTURE": self.state["departure_time"],
+                "ARRIVAL": self.state["arrival_time"],
+                "FORECAST_HORIZON_HOURS": self.state["forecast_horizon"],
+                "FORECAST_RESOLUTION_HOURS": self.state["forecast_resolution"],
+            },
+            "ALGORITHM": self.state["algorithm"],
+            "BOAT": {
+                "PRESET": self.state["boat_preset"],
+                "BOAT_SPEED": vessel["BOAT_SPEED"],
+                "BOAT_LENGTH": vessel["BOAT_LENGTH"],
+                "BOAT_BREADTH": vessel["BOAT_BREADTH"],
+            },
+            "DATA": {
+                "MODE": self.state["data_mode"],
+                "WEATHER_DATA": self.state["weather_path"],
+                "DEPTH_DATA": self.state["depth_path"],
+            },
+            "OUTPUT": {
+                "ROUTE_PATH": self.state["route_output_path"],
+            },
+        }
+
+        return config
 
     def _export_json(self):
-        """Export a minimal demo WRT config JSON."""
-        if not self.state["source"] or not self.state["destination"]:
-            QMessageBox.warning(
-                self,
-                "Missing Route",
-                "Please select both Source and Destination first."
-            )
+        try:
+            config = self._build_config()
+        except ValueError as e:
+            QMessageBox.warning(self, "Missing Data", str(e))
             return
 
         path, _ = QFileDialog.getSaveFileName(
@@ -170,20 +396,6 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
 
         if not path:
             return
-
-        vessel = self._get_vessel_preset()
-
-        config = {
-            "DEFAULT_ROUTE": [
-                [self.state["source"][0], self.state["source"][1]],
-                [self.state["destination"][0], self.state["destination"][1]],
-            ],
-            "ALGORITHM": self._get_algorithm_value(),
-            "BOAT_SPEED": vessel["BOAT_SPEED"],
-            "BOAT_LENGTH": vessel["BOAT_LENGTH"],
-            "BOAT_BREADTH": vessel["BOAT_BREADTH"],
-            "OUTPUT_ROUTE": "route.geojson",
-        }
 
         try:
             with open(path, "w", encoding="utf-8") as f:
