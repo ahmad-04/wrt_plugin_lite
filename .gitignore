@@ -1,2 +1,18 @@
-# Ignore help documentation
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# Plugin build artifacts
+*.zip
+
+# Qt compiled resources
+resources.py
+
+# Documentation build
 help/
+build/
