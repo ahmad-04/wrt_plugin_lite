@@ -91,7 +91,6 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
 
         self.btnPickRoute.clicked.connect(self._start_pick_route)
         self.btnClearRoute.clicked.connect(self._clear_route)
-        self.btnExportJson.clicked.connect(self._export_json)
 
         self.comboAlgorithm.currentTextChanged.connect(self._on_algorithm_changed)
         self.comboVessel.currentTextChanged.connect(self._on_vessel_changed)
@@ -134,7 +133,7 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
 
         self.lineWeatherPath.setText("/path/to/output/weather.nc")
         self.lineDepthPath.setText("/path/to/output/depth.nc")
-        self.lineRouteOutputPath.setText("/path/to/output/route.geojson")
+        self.lineRouteOutputPath.setText("/path/to/output/route.json")
 
         self.state["departure_time"] = self.dateTimeDeparture.dateTime().toString("yyyy-MM-dd HH:mm")
         self.state["arrival_time"] = self.dateTimeArrival.dateTime().toString("yyyy-MM-dd HH:mm")
@@ -150,11 +149,22 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
         self._update_summary()
 
     def _go_next(self):
-        current = self.stackedWidget.currentIndex()
-        if current < self.stackedWidget.count() - 1:
-            self.navList.setCurrentRow(current + 1)
-        else:
-            self.accept()
+        current_index = self.stackedWidget.currentIndex()
+        last_index = self.stackedWidget.count() - 1
+
+        self._collect_form_data()
+
+        if current_index == last_index:
+            self._export_json()
+            return
+
+        self.stackedWidget.setCurrentIndex(current_index + 1)
+        self.navList.setCurrentRow(current_index + 1)
+
+        if self.stackedWidget.currentIndex() == last_index:
+            self._update_summary()
+
+        self._update_navigation_buttons()
 
     def _go_back(self):
         current = self.stackedWidget.currentIndex()
@@ -412,3 +422,25 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
                 "Export Failed",
                 f"Could not save file:\n{str(e)}"
             )
+    def _collect_form_data(self):
+        """Read values from UI and store in self.state"""
+
+        self.state["departure_time"] = self.dateTimeDeparture.dateTime().toString("yyyy-MM-dd HH:mm")
+        self.state["arrival_time"] = self.dateTimeArrival.dateTime().toString("yyyy-MM-dd HH:mm")
+
+        self.state["forecast_horizon"] = self.spinForecastHorizon.value()
+        self.state["forecast_resolution"] = self.spinForecastResolution.value()
+
+        algo_text = self.comboAlgorithm.currentText().lower()
+
+        if "isofuel" in algo_text:
+            self.state["algorithm"] = "isofuel"
+        else:
+            self.state["algorithm"] = "genetic"
+
+        self.state["boat_preset"] = self.comboVessel.currentText()
+        self.state["data_mode"] = self.comboDataMode.currentText()
+
+        self.state["weather_path"] = self.lineWeatherPath.text()
+        self.state["depth_path"] = self.lineDepthPath.text()
+        self.state["route_output_path"] = self.lineRouteOutputPath.text()
