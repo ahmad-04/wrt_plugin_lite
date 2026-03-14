@@ -1,641 +1,679 @@
 <ui version="4.0">
- <class>WRTPluginLiteDialogBase</class>
- <widget class="QDialog" name="WRTPluginLiteDialogBase">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>860</width>
-    <height>600</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>WRT Config Wizard</string>
-  </property>
-
-  <widget class="QListWidget" name="navList">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>180</width>
-     <height>560</height>
-    </rect>
-   </property>
-   <property name="currentRow">
-    <number>0</number>
-   </property>
-   <item>
-    <property name="text">
-     <string>Route</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Time &amp; Algorithm</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Data &amp; Output</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Summary</string>
-    </property>
-   </item>
-  </widget>
-
-  <widget class="QStackedWidget" name="stackedWidget">
-   <property name="geometry">
-    <rect>
-     <x>180</x>
-     <y>0</y>
-     <width>680</width>
-     <height>520</height>
-    </rect>
-   </property>
-
-   <widget class="QWidget" name="pageRoute">
-    <widget class="QLabel" name="labelRouteTitle">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>250</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Route</string>
-     </property>
-    </widget>
-
-    <widget class="QPushButton" name="btnPickRoute">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>60</y>
-       <width>190</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Pick Source &amp; Destination</string>
-     </property>
-    </widget>
-
-    <widget class="QPushButton" name="btnClearRoute">
-     <property name="geometry">
-      <rect>
-       <x>225</x>
-       <y>60</y>
-       <width>100</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Clear</string>
-     </property>
-    </widget>
-
-    <widget class="QTableWidget" name="tableRoute">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>120</y>
-       <width>620</width>
-       <height>300</height>
-      </rect>
-     </property>
-     <property name="columnCount">
-      <number>3</number>
-     </property>
-     <property name="rowCount">
-      <number>2</number>
-     </property>
-     <column>
-      <property name="text">
-       <string>Type</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Latitude</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Longitude</string>
-      </property>
-     </column>
-    </widget>
-   </widget>
-
-   <widget class="QWidget" name="pageTimeAlgorithm">
-    <widget class="QLabel" name="labelTimeAlgoTitle">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>220</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Time &amp; Algorithm</string>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelDepartureTime">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>70</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Departure Time</string>
-     </property>
-    </widget>
-
-    <widget class="QDateTimeEdit" name="dateTimeDeparture">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>70</y>
-       <width>230</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="displayFormat">
-      <string>yyyy-MM-dd HH:mm</string>
-     </property>
-    </widget>
-
-    <widget class="QCheckBox" name="checkUseArrivalTime">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>115</y>
-       <width>260</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Use Arrival Time instead of Boat Speed</string>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelArrivalTime">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>150</y>
-       <width>160</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Arrival Time</string>
-     </property>
-    </widget>
-
-    <widget class="QDateTimeEdit" name="dateTimeArrival">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>150</y>
-       <width>230</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="displayFormat">
-      <string>yyyy-MM-dd HH:mm</string>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelForecastHorizon">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>200</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Forecast Horizon (h)</string>
-     </property>
-    </widget>
-
-    <widget class="QSpinBox" name="spinForecastHorizon">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>200</y>
-       <width>100</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>240</number>
-     </property>
-     <property name="value">
-      <number>90</number>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelForecastResolution">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>240</y>
-       <width>160</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Forecast Resolution (h)</string>
-     </property>
-    </widget>
-
-    <widget class="QSpinBox" name="spinForecastResolution">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>240</y>
-       <width>100</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>24</number>
-     </property>
-     <property name="value">
-      <number>3</number>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelAlgorithm">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>290</y>
-       <width>140</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Algorithm Type</string>
-     </property>
-    </widget>
-
-    <widget class="QComboBox" name="comboAlgorithm">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>290</y>
-       <width>230</width>
-       <height>26</height>
-      </rect>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelVessel">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>330</y>
-       <width>140</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Boat Preset</string>
-     </property>
-    </widget>
-
-    <widget class="QComboBox" name="comboVessel">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>330</y>
-       <width>230</width>
-       <height>26</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
-
-   <widget class="QWidget" name="pageDataOutput">
-    <widget class="QLabel" name="labelDataOutputTitle">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>220</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Data &amp; Output</string>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelDataMode">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>70</y>
-       <width>140</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Data Mode</string>
-     </property>
-    </widget>
-
-    <widget class="QComboBox" name="comboDataMode">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>70</y>
-       <width>230</width>
-       <height>26</height>
-      </rect>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelWeatherPath">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>125</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Weather Path</string>
-     </property>
-    </widget>
-
-    <widget class="QLineEdit" name="lineWeatherPath">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>125</y>
-       <width>350</width>
-       <height>26</height>
-      </rect>
-     </property>
-    </widget>
-
-    <widget class="QPushButton" name="btnBrowseWeather">
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>125</y>
-       <width>90</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Browse...</string>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelDepthPath">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>175</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Depth Path</string>
-     </property>
-    </widget>
-
-    <widget class="QLineEdit" name="lineDepthPath">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>175</y>
-       <width>350</width>
-       <height>26</height>
-      </rect>
-     </property>
-    </widget>
-
-    <widget class="QPushButton" name="btnBrowseDepth">
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>175</y>
-       <width>90</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Browse...</string>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelCoursesPath">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>225</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Courses File</string>
-     </property>
-    </widget>
-
-    <widget class="QLineEdit" name="lineCoursesPath">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>225</y>
-       <width>350</width>
-       <height>26</height>
-      </rect>
-     </property>
-    </widget>
-
-    <widget class="QPushButton" name="btnBrowseCourses">
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>225</y>
-       <width>90</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Browse...</string>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelRouteOutputPath">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>275</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Output Directory</string>
-     </property>
-    </widget>
-
-    <widget class="QLineEdit" name="lineRouteOutputPath">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>275</y>
-       <width>350</width>
-       <height>26</height>
-      </rect>
-     </property>
-    </widget>
-
-    <widget class="QPushButton" name="btnBrowseOutputDir">
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>275</y>
-       <width>90</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Browse...</string>
-     </property>
-    </widget>
-   </widget>
-    
-   <widget class="QWidget" name="pageSummary">
-
-    <widget class="QLabel" name="labelSummaryTitle">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>220</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Summary</string>
-     </property>
-    </widget>
-    
-    <widget class="QPlainTextEdit" name="summaryText">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>60</y>
-       <width>620</width>
-       <height>390</height>
-      </rect>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnLoadRoute">
-     <property name="geometry">
-        <rect>
-        <x>20</x>
-        <y>462</y>
-        <width>160</width>
-        <height>28</height>
-        </rect>
-        </property>
-        <property name="text">
-        <string>Load Route to QGIS</string>
-     </property>
-    </widget>
-
-    <widget class="QLabel" name="labelRouteSummary">
+    <class>WRTPluginLiteDialogBase</class>
+    <widget class="QDialog" name="WRTPluginLiteDialogBase">
         <property name="geometry">
             <rect>
-            <x>190</x>
-            <y>462</y>
-            <width>450</width>
-            <height>28</height>
+                <x>0</x>
+                <y>0</y>
+                <width>860</width>
+                <height>600</height>
             </rect>
+        </property>
+        <property name="windowTitle">
+            <string>WRT Config Wizard</string>
+        </property>
+
+        <widget class="QListWidget" name="navList">
+            <property name="geometry">
+                <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>180</width>
+                    <height>560</height>
+                </rect>
+            </property>
+            <property name="currentRow">
+                <number>0</number>
+            </property>
+            <item>
+                <property name="text">
+                    <string>Route</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Time &amp; Algorithm</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Data &amp; Output</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Summary</string>
+                </property>
+            </item>
+        </widget>
+
+        <widget class="QStackedWidget" name="stackedWidget">
+            <property name="geometry">
+                <rect>
+                    <x>180</x>
+                    <y>0</y>
+                    <width>680</width>
+                    <height>520</height>
+                </rect>
+            </property>
+
+            <widget class="QWidget" name="pageRoute">
+                <widget class="QLabel" name="labelRouteTitle">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>20</y>
+                            <width>250</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Route</string>
+                    </property>
+                </widget>
+
+                <widget class="QPushButton" name="btnPickRoute">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>60</y>
+                            <width>190</width>
+                            <height>32</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Pick Source &amp; Destination</string>
+                    </property>
+                </widget>
+
+                <widget class="QPushButton" name="btnClearRoute">
+                    <property name="geometry">
+                        <rect>
+                            <x>225</x>
+                            <y>60</y>
+                            <width>100</width>
+                            <height>32</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Clear</string>
+                    </property>
+                </widget>
+
+                <widget class="QTableWidget" name="tableRoute">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>120</y>
+                            <width>620</width>
+                            <height>300</height>
+                        </rect>
+                    </property>
+                    <property name="columnCount">
+                        <number>3</number>
+                    </property>
+                    <property name="rowCount">
+                        <number>2</number>
+                    </property>
+                    <column>
+                        <property name="text">
+                            <string>Type</string>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Latitude</string>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Longitude</string>
+                        </property>
+                    </column>
+                </widget>
+            </widget>
+
+            <widget class="QWidget" name="pageTimeAlgorithm">
+                <widget class="QLabel" name="labelTimeAlgoTitle">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>20</y>
+                            <width>220</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Time &amp; Algorithm</string>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelDepartureTime">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>70</y>
+                            <width>150</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Departure Time</string>
+                    </property>
+                </widget>
+
+                <widget class="QDateTimeEdit" name="dateTimeDeparture">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>70</y>
+                            <width>230</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property name="displayFormat">
+                        <string>yyyy-MM-dd HH:mm</string>
+                    </property>
+                </widget>
+
+                <widget class="QCheckBox" name="checkUseArrivalTime">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>115</y>
+                            <width>260</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Use Arrival Time instead of Boat Speed</string>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelArrivalTime">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>150</y>
+                            <width>160</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Arrival Time</string>
+                    </property>
+                </widget>
+
+                <widget class="QDateTimeEdit" name="dateTimeArrival">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>150</y>
+                            <width>230</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property name="displayFormat">
+                        <string>yyyy-MM-dd HH:mm</string>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelForecastHorizon">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>200</y>
+                            <width>150</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Forecast Horizon (h)</string>
+                    </property>
+                </widget>
+
+                <widget class="QSpinBox" name="spinForecastHorizon">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>200</y>
+                            <width>100</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property name="minimum">
+                        <number>1</number>
+                    </property>
+                    <property name="maximum">
+                        <number>240</number>
+                    </property>
+                    <property name="value">
+                        <number>90</number>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelForecastResolution">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>240</y>
+                            <width>160</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Forecast Resolution (h)</string>
+                    </property>
+                </widget>
+
+                <widget class="QSpinBox" name="spinForecastResolution">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>240</y>
+                            <width>100</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property name="minimum">
+                        <number>1</number>
+                    </property>
+                    <property name="maximum">
+                        <number>24</number>
+                    </property>
+                    <property name="value">
+                        <number>3</number>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelAlgorithm">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>290</y>
+                            <width>140</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Algorithm Type</string>
+                    </property>
+                </widget>
+
+                <widget class="QComboBox" name="comboAlgorithm">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>290</y>
+                            <width>230</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelVessel">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>330</y>
+                            <width>140</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Boat Preset</string>
+                    </property>
+                </widget>
+
+                <widget class="QComboBox" name="comboVessel">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>330</y>
+                            <width>230</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                </widget>
+            </widget>
+
+            <widget class="QWidget" name="pageDataOutput">
+                <widget class="QLabel" name="labelDataOutputTitle">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>20</y>
+                            <width>220</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Data &amp; Output</string>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelDataMode">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>70</y>
+                            <width>140</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Data Mode</string>
+                    </property>
+                </widget>
+
+                <widget class="QComboBox" name="comboDataMode">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>70</y>
+                            <width>230</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelWeatherPath">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>125</y>
+                            <width>150</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Weather Path</string>
+                    </property>
+                </widget>
+
+                <widget class="QLineEdit" name="lineWeatherPath">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>125</y>
+                            <width>350</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                </widget>
+
+                <widget class="QPushButton" name="btnBrowseWeather">
+                    <property name="geometry">
+                        <rect>
+                            <x>550</x>
+                            <y>125</y>
+                            <width>90</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Browse...</string>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelDepthPath">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>175</y>
+                            <width>150</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Depth Path</string>
+                    </property>
+                </widget>
+
+                <widget class="QLineEdit" name="lineDepthPath">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>175</y>
+                            <width>350</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                </widget>
+
+                <widget class="QPushButton" name="btnBrowseDepth">
+                    <property name="geometry">
+                        <rect>
+                            <x>550</x>
+                            <y>175</y>
+                            <width>90</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Browse...</string>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelCoursesPath">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>225</y>
+                            <width>150</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Courses File</string>
+                    </property>
+                </widget>
+
+                <widget class="QLineEdit" name="lineCoursesPath">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>225</y>
+                            <width>350</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                </widget>
+
+                <widget class="QPushButton" name="btnBrowseCourses">
+                    <property name="geometry">
+                        <rect>
+                            <x>550</x>
+                            <y>225</y>
+                            <width>90</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Browse...</string>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelRouteOutputPath">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>275</y>
+                            <width>150</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Output Directory</string>
+                    </property>
+                </widget>
+
+                <widget class="QLineEdit" name="lineRouteOutputPath">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>275</y>
+                            <width>350</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                </widget>
+
+                <widget class="QPushButton" name="btnBrowseOutputDir">
+                    <property name="geometry">
+                        <rect>
+                            <x>550</x>
+                            <y>275</y>
+                            <width>90</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Browse...</string>
+                    </property>
+                </widget>
+            </widget>
+
+            <widget class="QWidget" name="pageSummary">
+
+                <widget class="QLabel" name="labelSummaryTitle">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>20</y>
+                            <width>220</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Summary</string>
+                    </property>
+                </widget>
+
+                <widget class="QPlainTextEdit" name="summaryText">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>60</y>
+                            <width>620</width>
+                            <height>390</height>
+                        </rect>
+                    </property>
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton" name="btnLoadRoute">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>462</y>
+                            <width>160</width>
+                            <height>28</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Load Route to QGIS</string>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelRouteSummary">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>462</y>
+                            <width>450</width>
+                            <height>80</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" name="btnLoadWeather">
+                    <property name="geometry">
+                        <rect>
+                            <x>20</x>
+                            <y>500</y>
+                            <width>160</width>
+                            <height>28</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Load Weather Layer</string>
+                    </property>
+                </widget>
+
+                <widget class="QComboBox" name="comboWeatherVariable">
+                    <property name="geometry">
+                        <rect>
+                            <x>190</x>
+                            <y>500</y>
+                            <width>220</width>
+                            <height>28</height>
+                        </rect>
+                    </property>
+                </widget>
+
+                <widget class="QLabel" name="labelWeatherStats">
+                    <property name="geometry">
+                        <rect>
+                            <x>420</x>
+                            <y>500</y>
+                            <width>220</width>
+                            <height>28</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+            </widget>
+        </widget>
+
+        <widget class="QPushButton" name="btnBack">
+            <property name="geometry">
+                <rect>
+                    <x>560</x>
+                    <y>545</y>
+                    <width>85</width>
+                    <height>30</height>
+                </rect>
             </property>
             <property name="text">
-            <string></string>
-        </property>
+                <string>Back</string>
+            </property>
+        </widget>
+
+        <widget class="QPushButton" name="btnNext">
+            <property name="geometry">
+                <rect>
+                    <x>655</x>
+                    <y>545</y>
+                    <width>85</width>
+                    <height>30</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Next</string>
+            </property>
+        </widget>
+
+        <widget class="QPushButton" name="btnCancel">
+            <property name="geometry">
+                <rect>
+                    <x>750</x>
+                    <y>545</y>
+                    <width>85</width>
+                    <height>30</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Cancel</string>
+            </property>
+        </widget>
     </widget>
-   </widget>
-  </widget>
 
-  <widget class="QPushButton" name="btnBack">
-   <property name="geometry">
-    <rect>
-     <x>560</x>
-     <y>545</y>
-     <width>85</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Back</string>
-   </property>
-  </widget>
-
-  <widget class="QPushButton" name="btnNext">
-   <property name="geometry">
-    <rect>
-     <x>655</x>
-     <y>545</y>
-     <width>85</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Next</string>
-   </property>
-  </widget>
-
-  <widget class="QPushButton" name="btnCancel">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>545</y>
-     <width>85</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Cancel</string>
-   </property>
-  </widget>
- </widget>
-
- <resources/>
- <connections/>
+    <resources />
+    <connections />
 </ui>

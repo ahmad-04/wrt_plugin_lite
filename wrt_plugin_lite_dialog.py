@@ -33,6 +33,7 @@ from qgis.utils import iface
 
 from .route_visualiser import RouteVisualiser
 from .route_map_tool import RouteMapTool
+from .weather_visualiser import WeatherVisualiser
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "wrt_plugin_lite_dialog_base.ui")
@@ -93,6 +94,7 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
     def _connect_signals(self):
         self.navList.currentRowChanged.connect(self._change_page)
         self.btnLoadRoute.clicked.connect(self._load_route_to_qgis)
+        self.btnLoadWeather.clicked.connect(self._load_weather_layer)
 
         self.btnNext.clicked.connect(self._go_next)
         self.btnBack.clicked.connect(self._go_back)
@@ -773,14 +775,108 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
             return
 
         summary = rv.get_route_summary(point_layer)
-        waypoints  = summary.get("waypoints", "?")
-        speed_mean = summary.get("speed_mean")
-        fuel_total = summary.get("fuel_total")
+        lines = []
+        lines.append(f"Loaded {summary.get('waypoints', '?')} waypoints")
+        if summary.get("speed_mean"):
+            lines.append(
+                f"Speed: {summary['speed_min']} - "
+                f"{summary['speed_max']} m/s  "
+                f"(avg {summary['speed_mean']} m/s)"
+            )
+        if summary.get("fuel_total"):
+            lines.append(f"Total fuel: {summary['fuel_total']} t/h")
+        if summary.get("engine_power_mean"):
+            lines.append(f"Avg engine power: {summary['engine_power_mean']} kW")
 
-        msg = f"Route loaded: {waypoints} waypoints"
-        if speed_mean:
-            msg += f"\nAvg speed: {speed_mean} m/s"
-        if fuel_total:
-            msg += f"\nTotal fuel: {fuel_total} t/h"
+        self.labelRouteSummary.setText("\n".join(lines))
+    def _load_weather_layer(self):
+        # Step 1 — pick the NetCDF file
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Load Weather Data",
+            "",
+            "NetCDF Files (*.nc);;All Files (*)"
+        )
+        if not path:
+            return
 
-        self.labelRouteSummary.setText(msg)
+        # Step 2 — populate variable combo
+        wv = WeatherVisualiser()
+        variables = wv.get_available_variables(path)
+
+        if not variables:
+            QMessageBox.warning(
+                self,
+                "No Variables Found",
+                "Could not read any known variables from this file."
+            )
+            return
+
+        self.comboWeatherVariable.clear()
+        for var_name, label, unit in variables:
+            self.comboWeatherVariable.addItem(
+                f"{label} ({unit})", userData=var_name
+            )
+
+        # Step 3 — load the selected variable at time step 0
+        var_name = self.comboWeatherVariable.currentData()
+        layer = wv.load_variable(path, var_name, time_index=0)
+
+        if layer is None:
+            QMessageBox.warning(
+                self,
+                "Load Failed",
+                f"Could not load variable '{var_name}' from file."
+            )
+            return
+
+        # Step 4 — compute stats for current map extent
+        canvas_extent = iface.mapCanvas().extent()
+        stats = wv.compute_bbox_stats(path, var_name, 0, canvas_extent)
+
+        if stats:
+            self.labelWeatherStats.setText(
+                f"mean: {stats['mean']} {stats['unit']}  "
+                f"min: {stats['min']}  max: {stats['max']}"
+            )
+        else:
+            self.labelWeatherStats.setText("Layer loaded")
+
+        # Store path for combo changes
+        self._weather_nc_path = path
+        self._weather_visualiser = wv
+
+        # Connect combo change to reload
+        try:
+            self.comboWeatherVariable.currentIndexChanged.disconnect(
+                self._on_weather_variable_changed
+            )
+        except Exception:
+            pass
+        self.comboWeatherVariable.currentIndexChanged.connect(
+            self._on_weather_variable_changed
+        )
+
+    def _on_weather_variable_changed(self, index):
+        """Reload layer when user picks a different variable."""
+        if not hasattr(self, "_weather_nc_path"):
+            return
+
+        var_name = self.comboWeatherVariable.currentData()
+        if not var_name:
+            return
+
+        layer = self._weather_visualiser.load_variable(
+            self._weather_nc_path, var_name, time_index=0
+        )
+
+        if layer:
+            canvas_extent = iface.mapCanvas().extent()
+            stats = self._weather_visualiser.compute_bbox_stats(
+                self._weather_nc_path, var_name, 0, canvas_extent
+            )
+            if stats:
+                self.labelWeatherStats.setText(
+                    f"mean: {stats['mean']} {stats['unit']}  "
+                    f"min: {stats['min']}  max: {stats['max']}"
+                )
