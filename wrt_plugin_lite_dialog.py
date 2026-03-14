@@ -31,6 +31,7 @@ from qgis.PyQt.QtCore import QDateTime, Qt
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QTableWidgetItem
 from qgis.utils import iface
 
+from .route_visualiser import RouteVisualiser
 from .route_map_tool import RouteMapTool
 
 FORM_CLASS, _ = uic.loadUiType(
@@ -91,6 +92,7 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def _connect_signals(self):
         self.navList.currentRowChanged.connect(self._change_page)
+        self.btnLoadRoute.clicked.connect(self._load_route_to_qgis)
 
         self.btnNext.clicked.connect(self._go_next)
         self.btnBack.clicked.connect(self._go_back)
@@ -751,3 +753,34 @@ class WRTPluginLiteDialog(QtWidgets.QDialog, FORM_CLASS):
                 "Export Failed",
                 f"Could not save file:\n{str(e)}"
             )
+    
+    def _load_route_to_qgis(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Load WRT Route",
+            "",
+            "JSON Files (*.json);;All Files (*)"
+        )
+        if not path:
+            return
+
+        rv = RouteVisualiser()
+        line_layer, point_layer = rv.load_route(path)
+
+        if point_layer is None:
+            QMessageBox.warning(self, "Load Failed",
+                "Could not load route. Check the file is a valid WRT output JSON.")
+            return
+
+        summary = rv.get_route_summary(point_layer)
+        waypoints  = summary.get("waypoints", "?")
+        speed_mean = summary.get("speed_mean")
+        fuel_total = summary.get("fuel_total")
+
+        msg = f"Route loaded: {waypoints} waypoints"
+        if speed_mean:
+            msg += f"\nAvg speed: {speed_mean} m/s"
+        if fuel_total:
+            msg += f"\nTotal fuel: {fuel_total} t/h"
+
+        self.labelRouteSummary.setText(msg)
