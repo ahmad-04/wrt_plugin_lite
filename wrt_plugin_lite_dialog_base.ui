@@ -1,613 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>WRTPluginLiteDialogBase</class>
  <widget class="QDialog" name="WRTPluginLiteDialogBase">
   <property name="geometry">
    <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>860</width>
-    <height>600</height>
+    <x>0</x><y>0</y><width>860</width><height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>WRT Config Wizard</string>
   </property>
+  <property name="styleSheet">
+   <string>QDialog { background-color: #f5f5f5; }</string>
+  </property>
 
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- SIDEBAR                                                -->
+  <!-- ══════════════════════════════════════════════════════ -->
   <widget class="QListWidget" name="navList">
    <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>180</width>
-     <height>560</height>
-    </rect>
+    <rect><x>0</x><y>0</y><width>180</width><height>600</height></rect>
    </property>
-   <property name="currentRow">
-    <number>0</number>
+   <property name="styleSheet">
+    <string>
+QListWidget {
+    background-color: #1e3a5f;
+    color: #c8d8e8;
+    border: none;
+    font-size: 13px;
+    outline: none;
+    padding-top: 16px;
+}
+QListWidget::item {
+    padding: 14px 20px;
+    border-left: 3px solid transparent;
+}
+QListWidget::item:selected {
+    background-color: #2e5f8f;
+    color: #ffffff;
+    border-left: 3px solid #5ba3d9;
+    font-weight: bold;
+}
+QListWidget::item:hover:!selected {
+    background-color: #264d7a;
+    color: #e0eaf4;
+}
+    </string>
    </property>
-   <item>
-    <property name="text">
-     <string>Route</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Time &amp; Algorithm</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Data &amp; Output</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Summary</string>
-    </property>
-   </item>
+   <property name="currentRow"><number>0</number></property>
+   <item><property name="text"><string>  Route</string></property></item>
+   <item><property name="text"><string>  Time &amp; Algorithm</string></property></item>
+   <item><property name="text"><string>  Data &amp; Output</string></property></item>
+   <item><property name="text"><string>  Summary</string></property></item>
   </widget>
 
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- STACKED WIDGET                                         -->
+  <!-- ══════════════════════════════════════════════════════ -->
   <widget class="QStackedWidget" name="stackedWidget">
    <property name="geometry">
-    <rect>
-     <x>180</x>
-     <y>0</y>
-     <width>680</width>
-     <height>520</height>
-    </rect>
+    <rect><x>180</x><y>0</y><width>680</width><height>540</height></rect>
+   </property>
+   <property name="styleSheet">
+    <string>
+QWidget { background-color: #ffffff; }
+QLabel { color: #2c3e50; font-size: 12px; }
+QLineEdit, QSpinBox, QDateTimeEdit, QComboBox {
+    border: 1px solid #c0cdd8;
+    border-radius: 4px;
+    padding: 4px 8px;
+    background-color: #ffffff;
+    color: #2c2c2c;
+}
+QLineEdit:focus, QSpinBox:focus, QDateTimeEdit:focus, QComboBox:focus {
+    border: 1px solid #5ba3d9;
+}
+QComboBox::drop-down { border: none; width: 20px; }
+QTableWidget {
+    border: 1px solid #dce3ea;
+    border-radius: 4px;
+    gridline-color: #eaf0f5;
+    background-color: #ffffff;
+    selection-background-color: #dceef9;
+    selection-color: #1e3a5f;
+}
+QTableWidget QHeaderView::section {
+    background-color: #eaf0f6;
+    color: #1e3a5f;
+    font-weight: bold;
+    padding: 6px;
+    border: none;
+    border-right: 1px solid #d0dce8;
+    border-bottom: 1px solid #d0dce8;
+}
+QPushButton {
+    background-color: #2e6da4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-size: 12px;
+}
+QPushButton:hover { background-color: #3a85c4; }
+QPushButton:pressed { background-color: #1e5a8a; }
+QPushButton#btnClearRoute {
+    background-color: #e8edf2;
+    color: #2c3e50;
+}
+QPushButton#btnClearRoute:hover { background-color: #d5dde6; }
+QPlainTextEdit {
+    border: 1px solid #dce3ea;
+    border-radius: 4px;
+    background-color: #f9fbfc;
+    color: #2c2c2c;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    padding: 8px;
+}
+QCheckBox { color: #2c3e50; font-size: 12px; }
+QCheckBox::indicator {
+    width: 16px; height: 16px;
+    border: 1px solid #c0cdd8;
+    border-radius: 3px;
+    background-color: white;
+}
+QCheckBox::indicator:checked {
+    background-color: #2e6da4;
+    border-color: #2e6da4;
+}
+    </string>
    </property>
 
+   <!-- ─────────────────────────────────────────────────── -->
+   <!-- PAGE 1: ROUTE                                        -->
+   <!-- ─────────────────────────────────────────────────── -->
    <widget class="QWidget" name="pageRoute">
+    <widget class="QFrame" name="accentRoute">
+     <property name="geometry"><rect><x>0</x><y>0</y><width>680</width><height>4</height></rect></property>
+     <property name="styleSheet"><string>background-color: #2e6da4; border: none;</string></property>
+    </widget>
     <widget class="QLabel" name="labelRouteTitle">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>250</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Route</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>20</y><width>300</width><height>28</height></rect></property>
+     <property name="text"><string>Route Definition</string></property>
+     <property name="styleSheet"><string>font-size: 16px; font-weight: bold; color: #1e3a5f;</string></property>
     </widget>
-
+    <widget class="QLabel" name="labelRouteHint">
+     <property name="geometry"><rect><x>24</x><y>50</y><width>500</width><height>20</height></rect></property>
+     <property name="text"><string>Click the map to set source and destination waypoints.</string></property>
+     <property name="styleSheet"><string>font-size: 11px; color: #6b8099;</string></property>
+    </widget>
     <widget class="QPushButton" name="btnPickRoute">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>60</y>
-       <width>190</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Pick Source &amp; Destination</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>82</y><width>200</width><height>32</height></rect></property>
+     <property name="text"><string>Pick Source &amp; Destination</string></property>
     </widget>
-
     <widget class="QPushButton" name="btnClearRoute">
-     <property name="geometry">
-      <rect>
-       <x>225</x>
-       <y>60</y>
-       <width>100</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Clear</string>
-     </property>
+     <property name="geometry"><rect><x>234</x><y>82</y><width>90</width><height>32</height></rect></property>
+     <property name="text"><string>Clear</string></property>
     </widget>
-
     <widget class="QTableWidget" name="tableRoute">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>120</y>
-       <width>620</width>
-       <height>300</height>
-      </rect>
-     </property>
-     <property name="columnCount">
-      <number>3</number>
-     </property>
-     <property name="rowCount">
-      <number>2</number>
-     </property>
-     <column>
-      <property name="text">
-       <string>Type</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Latitude</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Longitude</string>
-      </property>
-     </column>
+     <property name="geometry"><rect><x>24</x><y>130</y><width>628</width><height>300</height></rect></property>
+     <property name="columnCount"><number>3</number></property>
+     <property name="rowCount"><number>2</number></property>
+     <column><property name="text"><string>Type</string></property></column>
+     <column><property name="text"><string>Latitude</string></property></column>
+     <column><property name="text"><string>Longitude</string></property></column>
     </widget>
    </widget>
 
+   <!-- ─────────────────────────────────────────────────── -->
+   <!-- PAGE 2: TIME & ALGORITHM                            -->
+   <!-- ─────────────────────────────────────────────────── -->
    <widget class="QWidget" name="pageTimeAlgorithm">
+    <widget class="QFrame" name="accentTime">
+     <property name="geometry"><rect><x>0</x><y>0</y><width>680</width><height>4</height></rect></property>
+     <property name="styleSheet"><string>background-color: #2e6da4; border: none;</string></property>
+    </widget>
     <widget class="QLabel" name="labelTimeAlgoTitle">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>220</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Time &amp; Algorithm</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>20</y><width>300</width><height>28</height></rect></property>
+     <property name="text"><string>Time &amp; Algorithm</string></property>
+     <property name="styleSheet"><string>font-size: 16px; font-weight: bold; color: #1e3a5f;</string></property>
     </widget>
-
     <widget class="QLabel" name="labelDepartureTime">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>70</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Departure Time</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>72</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Departure Time</string></property>
     </widget>
-
     <widget class="QDateTimeEdit" name="dateTimeDeparture">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>70</y>
-       <width>230</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="displayFormat">
-      <string>yyyy-MM-dd HH:mm</string>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>70</y><width>230</width><height>28</height></rect></property>
+     <property name="displayFormat"><string>yyyy-MM-dd HH:mm</string></property>
     </widget>
-
     <widget class="QCheckBox" name="checkUseArrivalTime">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>115</y>
-       <width>260</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Use Arrival Time instead of Boat Speed</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>114</y><width>300</width><height>24</height></rect></property>
+     <property name="text"><string>Use Arrival Time instead of Boat Speed</string></property>
     </widget>
-
     <widget class="QLabel" name="labelArrivalTime">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>150</y>
-       <width>160</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Arrival Time</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>152</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Arrival Time</string></property>
     </widget>
-
     <widget class="QDateTimeEdit" name="dateTimeArrival">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>150</y>
-       <width>230</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="displayFormat">
-      <string>yyyy-MM-dd HH:mm</string>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>150</y><width>230</width><height>28</height></rect></property>
+     <property name="displayFormat"><string>yyyy-MM-dd HH:mm</string></property>
     </widget>
-
+    <widget class="QFrame" name="div1">
+     <property name="geometry"><rect><x>24</x><y>194</y><width>628</width><height>1</height></rect></property>
+     <property name="styleSheet"><string>background-color: #e0e8f0;</string></property>
+    </widget>
     <widget class="QLabel" name="labelForecastHorizon">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>200</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Forecast Horizon (h)</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>208</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Forecast Horizon (h)</string></property>
     </widget>
-
     <widget class="QSpinBox" name="spinForecastHorizon">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>200</y>
-       <width>100</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>240</number>
-     </property>
-     <property name="value">
-      <number>90</number>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>206</y><width>100</width><height>28</height></rect></property>
+     <property name="minimum"><number>1</number></property>
+     <property name="maximum"><number>240</number></property>
+     <property name="value"><number>90</number></property>
     </widget>
-
     <widget class="QLabel" name="labelForecastResolution">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>240</y>
-       <width>160</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Forecast Resolution (h)</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>248</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Forecast Resolution (h)</string></property>
     </widget>
-
     <widget class="QSpinBox" name="spinForecastResolution">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>240</y>
-       <width>100</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>24</number>
-     </property>
-     <property name="value">
-      <number>3</number>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>246</y><width>100</width><height>28</height></rect></property>
+     <property name="minimum"><number>1</number></property>
+     <property name="maximum"><number>24</number></property>
+     <property name="value"><number>3</number></property>
     </widget>
-
+    <widget class="QFrame" name="div2">
+     <property name="geometry"><rect><x>24</x><y>288</y><width>628</width><height>1</height></rect></property>
+     <property name="styleSheet"><string>background-color: #e0e8f0;</string></property>
+    </widget>
     <widget class="QLabel" name="labelAlgorithm">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>290</y>
-       <width>140</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Algorithm Type</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>302</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Algorithm Type</string></property>
     </widget>
-
     <widget class="QComboBox" name="comboAlgorithm">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>290</y>
-       <width>230</width>
-       <height>26</height>
-      </rect>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>300</y><width>230</width><height>28</height></rect></property>
     </widget>
-
     <widget class="QLabel" name="labelVessel">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>330</y>
-       <width>140</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Boat Preset</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>344</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Boat Preset</string></property>
     </widget>
-
     <widget class="QComboBox" name="comboVessel">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>330</y>
-       <width>230</width>
-       <height>26</height>
-      </rect>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>342</y><width>230</width><height>28</height></rect></property>
     </widget>
    </widget>
 
+   <!-- ─────────────────────────────────────────────────── -->
+   <!-- PAGE 3: DATA & OUTPUT                               -->
+   <!-- ─────────────────────────────────────────────────── -->
    <widget class="QWidget" name="pageDataOutput">
+    <widget class="QFrame" name="accentData">
+     <property name="geometry"><rect><x>0</x><y>0</y><width>680</width><height>4</height></rect></property>
+     <property name="styleSheet"><string>background-color: #2e6da4; border: none;</string></property>
+    </widget>
     <widget class="QLabel" name="labelDataOutputTitle">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>220</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Data &amp; Output</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>20</y><width>300</width><height>28</height></rect></property>
+     <property name="text"><string>Data &amp; Output</string></property>
+     <property name="styleSheet"><string>font-size: 16px; font-weight: bold; color: #1e3a5f;</string></property>
     </widget>
-
     <widget class="QLabel" name="labelDataMode">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>70</y>
-       <width>140</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Data Mode</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>72</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Data Mode</string></property>
     </widget>
-
     <widget class="QComboBox" name="comboDataMode">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>70</y>
-       <width>230</width>
-       <height>26</height>
-      </rect>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>70</y><width>230</width><height>28</height></rect></property>
     </widget>
-
+    <widget class="QFrame" name="div3">
+     <property name="geometry"><rect><x>24</x><y>112</y><width>628</width><height>1</height></rect></property>
+     <property name="styleSheet"><string>background-color: #e0e8f0;</string></property>
+    </widget>
     <widget class="QLabel" name="labelWeatherPath">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>125</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Weather Path</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>126</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Weather Path</string></property>
     </widget>
-
     <widget class="QLineEdit" name="lineWeatherPath">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>125</y>
-       <width>350</width>
-       <height>26</height>
-      </rect>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>124</y><width>350</width><height>28</height></rect></property>
     </widget>
-
     <widget class="QPushButton" name="btnBrowseWeather">
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>125</y>
-       <width>90</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Browse...</string>
-     </property>
+     <property name="geometry"><rect><x>550</x><y>124</y><width>90</width><height>28</height></rect></property>
+     <property name="text"><string>Browse...</string></property>
     </widget>
-
     <widget class="QLabel" name="labelDepthPath">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>175</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Depth Path</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>166</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Depth Path</string></property>
     </widget>
-
     <widget class="QLineEdit" name="lineDepthPath">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>175</y>
-       <width>350</width>
-       <height>26</height>
-      </rect>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>164</y><width>350</width><height>28</height></rect></property>
     </widget>
-
     <widget class="QPushButton" name="btnBrowseDepth">
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>175</y>
-       <width>90</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Browse...</string>
-     </property>
+     <property name="geometry"><rect><x>550</x><y>164</y><width>90</width><height>28</height></rect></property>
+     <property name="text"><string>Browse...</string></property>
     </widget>
-
     <widget class="QLabel" name="labelCoursesPath">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>225</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Courses File</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>206</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Courses File</string></property>
     </widget>
-
     <widget class="QLineEdit" name="lineCoursesPath">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>225</y>
-       <width>350</width>
-       <height>26</height>
-      </rect>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>204</y><width>350</width><height>28</height></rect></property>
     </widget>
-
     <widget class="QPushButton" name="btnBrowseCourses">
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>225</y>
-       <width>90</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Browse...</string>
-     </property>
+     <property name="geometry"><rect><x>550</x><y>204</y><width>90</width><height>28</height></rect></property>
+     <property name="text"><string>Browse...</string></property>
     </widget>
-
+    <widget class="QFrame" name="div4">
+     <property name="geometry"><rect><x>24</x><y>246</y><width>628</width><height>1</height></rect></property>
+     <property name="styleSheet"><string>background-color: #e0e8f0;</string></property>
+    </widget>
     <widget class="QLabel" name="labelRouteOutputPath">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>275</y>
-       <width>150</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Output Directory</string>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>260</y><width>155</width><height>24</height></rect></property>
+     <property name="text"><string>Output Directory</string></property>
     </widget>
-
     <widget class="QLineEdit" name="lineRouteOutputPath">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>275</y>
-       <width>350</width>
-       <height>26</height>
-      </rect>
-     </property>
+     <property name="geometry"><rect><x>190</x><y>258</y><width>350</width><height>28</height></rect></property>
     </widget>
-
     <widget class="QPushButton" name="btnBrowseOutputDir">
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>275</y>
-       <width>90</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Browse...</string>
-     </property>
+     <property name="geometry"><rect><x>550</x><y>258</y><width>90</width><height>28</height></rect></property>
+     <property name="text"><string>Browse...</string></property>
     </widget>
    </widget>
-    
+
+   <!-- ─────────────────────────────────────────────────── -->
+   <!-- PAGE 4: SUMMARY                                     -->
+   <!-- ─────────────────────────────────────────────────── -->
    <widget class="QWidget" name="pageSummary">
-    <widget class="QLabel" name="labelSummaryTitle">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>220</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Summary</string>
-     </property>
+    <widget class="QFrame" name="accentSummary">
+     <property name="geometry"><rect><x>0</x><y>0</y><width>680</width><height>4</height></rect></property>
+     <property name="styleSheet"><string>background-color: #2e6da4; border: none;</string></property>
     </widget>
-    
+    <widget class="QLabel" name="labelSummaryTitle">
+     <property name="geometry"><rect><x>24</x><y>20</y><width>300</width><height>28</height></rect></property>
+     <property name="text"><string>Configuration Summary</string></property>
+     <property name="styleSheet"><string>font-size: 16px; font-weight: bold; color: #1e3a5f;</string></property>
+    </widget>
+    <widget class="QLabel" name="labelSummaryHint">
+     <property name="geometry"><rect><x>24</x><y>50</y><width>560</width><height>20</height></rect></property>
+     <property name="text"><string>Review your configuration before exporting the JSON file.</string></property>
+     <property name="styleSheet"><string>font-size: 11px; color: #6b8099;</string></property>
+    </widget>
     <widget class="QPlainTextEdit" name="summaryText">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>60</y>
-       <width>620</width>
-       <height>390</height>
-      </rect>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
+     <property name="geometry"><rect><x>24</x><y>80</y><width>628</width><height>440</height></rect></property>
+     <property name="readOnly"><bool>true</bool></property>
     </widget>
    </widget>
+
+  </widget>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- BOTTOM BAR                                             -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <widget class="QFrame" name="bottomLine">
+   <property name="geometry"><rect><x>180</x><y>541</y><width>680</width><height>1</height></rect></property>
+   <property name="styleSheet"><string>background-color: #dce3ea;</string></property>
   </widget>
 
   <widget class="QPushButton" name="btnBack">
-   <property name="geometry">
-    <rect>
-     <x>560</x>
-     <y>545</y>
-     <width>85</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Back</string>
+   <property name="geometry"><rect><x>560</x><y>557</y><width>85</width><height>32</height></rect></property>
+   <property name="text"><string>Back</string></property>
+   <property name="styleSheet">
+    <string>
+QPushButton { background-color: #e8edf2; color: #2c3e50; border: none; border-radius: 4px; padding: 6px 14px; font-size: 12px; }
+QPushButton:hover { background-color: #d5dde6; }
+QPushButton:pressed { background-color: #c5cfd8; }
+    </string>
    </property>
   </widget>
 
   <widget class="QPushButton" name="btnNext">
-   <property name="geometry">
-    <rect>
-     <x>655</x>
-     <y>545</y>
-     <width>85</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Next</string>
+   <property name="geometry"><rect><x>655</x><y>557</y><width>85</width><height>32</height></rect></property>
+   <property name="text"><string>Next</string></property>
+   <property name="styleSheet">
+    <string>
+QPushButton { background-color: #2e6da4; color: white; border: none; border-radius: 4px; padding: 6px 14px; font-size: 12px; font-weight: bold; }
+QPushButton:hover { background-color: #3a85c4; }
+QPushButton:pressed { background-color: #1e5a8a; }
+    </string>
    </property>
   </widget>
 
   <widget class="QPushButton" name="btnCancel">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>545</y>
-     <width>85</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Cancel</string>
+   <property name="geometry"><rect><x>755</x><y>557</y><width>85</width><height>32</height></rect></property>
+   <property name="text"><string>Cancel</string></property>
+   <property name="styleSheet">
+    <string>
+QPushButton { background-color: #e8edf2; color: #2c3e50; border: none; border-radius: 4px; padding: 6px 14px; font-size: 12px; }
+QPushButton:hover { background-color: #d5dde6; }
+QPushButton:pressed { background-color: #c5cfd8; }
+    </string>
    </property>
   </widget>
- </widget>
 
+ </widget>
  <resources/>
  <connections/>
 </ui>

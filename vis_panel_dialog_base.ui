@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VisPanel</class>
+ <widget class="QDialog" name="VisPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>620</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WRT Visualisation Panel</string>
+  </property>
+
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>600</width>
+     <height>340</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+
+   <!-- ═══════════════════════════════════════════════════ -->
+   <!-- TAB 1: ROUTE                                        -->
+   <!-- ═══════════════════════════════════════════════════ -->
+   <widget class="QWidget" name="tabRoute">
+    <attribute name="title">
+     <string>Route</string>
+    </attribute>
+
+    <!-- File picker row -->
+    <widget class="QLabel" name="labelRouteFile">
+     <property name="geometry">
+      <rect><x>10</x><y>20</y><width>100</width><height>24</height></rect>
+     </property>
+     <property name="text"><string>Route JSON file</string></property>
+    </widget>
+
+    <widget class="QLineEdit" name="lineRouteFile">
+     <property name="geometry">
+      <rect><x>115</x><y>20</y><width>360</width><height>26</height></rect>
+     </property>
+     <property name="placeholderText">
+      <string>Path to WRT output JSON...</string>
+     </property>
+    </widget>
+
+    <widget class="QPushButton" name="btnBrowseRoute">
+     <property name="geometry">
+      <rect><x>485</x><y>20</y><width>90</width><height>26</height></rect>
+     </property>
+     <property name="text"><string>Browse...</string></property>
+    </widget>
+
+    <!-- Style field row -->
+    <widget class="QLabel" name="labelStyleField">
+     <property name="geometry">
+      <rect><x>10</x><y>60</y><width>100</width><height>24</height></rect>
+     </property>
+     <property name="text"><string>Colour by</string></property>
+    </widget>
+
+    <widget class="QComboBox" name="comboStyleField">
+     <property name="geometry">
+      <rect><x>115</x><y>60</y><width>200</width><height>26</height></rect>
+     </property>
+     <item><property name="text"><string>Speed (m/s)</string></property></item>
+     <item><property name="text"><string>Fuel consumption (t/h)</string></property></item>
+     <item><property name="text"><string>Engine power (kW)</string></property></item>
+     <item><property name="text"><string>Wave height (m)</string></property></item>
+    </widget>
+
+    <!-- Load button -->
+    <widget class="QPushButton" name="btnLoadRoute">
+     <property name="geometry">
+      <rect><x>10</x><y>100</y><width>160</width><height>30</height></rect>
+     </property>
+     <property name="text"><string>Load Route to QGIS</string></property>
+    </widget>
+
+    <!-- Stats box -->
+    <widget class="QGroupBox" name="groupRouteStats">
+     <property name="geometry">
+      <rect><x>10</x><y>145</y><width>565</width><height>150</height></rect>
+     </property>
+     <property name="title"><string>Route statistics</string></property>
+
+     <widget class="QLabel" name="labelRouteStats">
+      <property name="geometry">
+       <rect><x>10</x><y>25</y><width>545</width><height>110</height></rect>
+      </property>
+      <property name="text"><string>No route loaded.</string></property>
+      <property name="alignment">
+       <set>Qt::AlignTop|Qt::AlignLeft</set>
+      </property>
+      <property name="wordWrap"><bool>true</bool></property>
+     </widget>
+    </widget>
+
+   </widget>
+
+   <!-- ═══════════════════════════════════════════════════ -->
+   <!-- TAB 2: WEATHER                                      -->
+   <!-- ═══════════════════════════════════════════════════ -->
+   <widget class="QWidget" name="tabWeather">
+    <attribute name="title">
+     <string>Weather</string>
+    </attribute>
+
+    <!-- File picker row -->
+    <widget class="QLabel" name="labelWeatherFile">
+     <property name="geometry">
+      <rect><x>10</x><y>20</y><width>100</width><height>24</height></rect>
+     </property>
+     <property name="text"><string>NetCDF file</string></property>
+    </widget>
+
+    <widget class="QLineEdit" name="lineWeatherFile">
+     <property name="geometry">
+      <rect><x>115</x><y>20</y><width>360</width><height>26</height></rect>
+     </property>
+     <property name="placeholderText">
+      <string>Path to Copernicus Marine NetCDF...</string>
+     </property>
+    </widget>
+
+    <widget class="QPushButton" name="btnBrowseWeatherFile">
+     <property name="geometry">
+      <rect><x>485</x><y>20</y><width>90</width><height>26</height></rect>
+     </property>
+     <property name="text"><string>Browse...</string></property>
+    </widget>
+
+    <!-- Variable selector row -->
+    <widget class="QLabel" name="labelVariable">
+     <property name="geometry">
+      <rect><x>10</x><y>60</y><width>100</width><height>24</height></rect>
+     </property>
+     <property name="text"><string>Variable</string></property>
+    </widget>
+
+    <widget class="QComboBox" name="comboVariable">
+     <property name="geometry">
+      <rect><x>115</x><y>60</y><width>280</width><height>26</height></rect>
+     </property>
+    </widget>
+
+    <!-- Time step row -->
+    <widget class="QLabel" name="labelTimeStep">
+     <property name="geometry">
+      <rect><x>10</x><y>100</y><width>100</width><height>24</height></rect>
+     </property>
+     <property name="text"><string>Time step</string></property>
+    </widget>
+
+    <widget class="QSpinBox" name="spinTimeStep">
+     <property name="geometry">
+      <rect><x>115</x><y>100</y><width>80</width><height>26</height></rect>
+     </property>
+     <property name="minimum"><number>0</number></property>
+     <property name="maximum"><number>999</number></property>
+     <property name="value"><number>0</number></property>
+    </widget>
+
+    <widget class="QLabel" name="labelTimeStepMax">
+     <property name="geometry">
+      <rect><x>205</x><y>100</y><width>120</width><height>24</height></rect>
+     </property>
+     <property name="text"><string>of 0</string></property>
+    </widget>
+
+    <!-- Load button -->
+    <widget class="QPushButton" name="btnLoadWeatherLayer">
+     <property name="geometry">
+      <rect><x>10</x><y>140</y><width>160</width><height>30</height></rect>
+     </property>
+     <property name="text"><string>Load Weather Layer</string></property>
+    </widget>
+
+    <!-- Stats box -->
+    <widget class="QGroupBox" name="groupWeatherStats">
+     <property name="geometry">
+      <rect><x>10</x><y>185</y><width>565</width><height>110</height></rect>
+     </property>
+     <property name="title"><string>Statistics for current map extent</string></property>
+
+     <widget class="QLabel" name="labelWeatherStats">
+      <property name="geometry">
+       <rect><x>10</x><y>25</y><width>545</width><height>75</height></rect>
+      </property>
+      <property name="text"><string>No layer loaded.</string></property>
+      <property name="alignment">
+       <set>Qt::AlignTop|Qt::AlignLeft</set>
+      </property>
+      <property name="wordWrap"><bool>true</bool></property>
+     </widget>
+    </widget>
+
+   </widget>
+  </widget>
+
+  <!-- Close button -->
+  <widget class="QPushButton" name="btnClose">
+   <property name="geometry">
+    <rect><x>510</x><y>360</y><width>90</width><height>30</height></rect>
+   </property>
+   <property name="text"><string>Close</string></property>
+  </widget>
+
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
